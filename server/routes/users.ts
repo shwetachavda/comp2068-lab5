@@ -1,12 +1,17 @@
-"use strict";
-var express = require('express');
+import express = require('express');
 var router = express.Router();
-var userModel = require('../models/user');
-var User = userModel.User;
+
+// db references
+import mongoose = require('mongoose');
+import userModel = require('../models/user');
+
+import User = userModel.User;
+
 // GET - show main users page
-router.get('/', function (req, res, next) {
+router.get('/', (req: express.Request, res: express.Response, next: any) => {
+   
     // use the User model to query the Users collection
-    User.find(function (error, users) {
+    User.find(function(error, users) {
         if (error) {
             console.log(error);
             res.end(error);
@@ -20,18 +25,20 @@ router.get('/', function (req, res, next) {
         }
     });
 });
+
 // GET add page - show the blank form
-router.get('/add', function (req, res, next) {
+router.get('/add', function(req: express.Request, res: express.Response, next: any) {
     res.render('users/add', {
         title: 'Add a New User'
     });
 });
+
 // POST add page - save the new user
-router.post('/add', function (req, res, next) {
+router.post('/add', function(req: express.Request, res: express.Response, next: any) {
     User.create({
         title: req.body.title,
         content: req.body.content
-    }, function (error, User) {
+    }, function(error, User) {
         // did we get back an error or valid User object?
         if (error) {
             console.log(error);
@@ -40,12 +47,15 @@ router.post('/add', function (req, res, next) {
         else {
             res.redirect('/users');
         }
-    });
+    })
 });
+
 // GET edit page - show the current user in the form
-router.get('/:id', function (req, res, next) {
+router.get('/:id', (req: express.Request, res: express.Response, next: any) => {
+
     var id = req.params.id;
-    User.findById(id, function (error, User) {
+
+    User.findById(id, (error, User) => {
         if (error) {
             console.log(error);
             res.end(error);
@@ -59,18 +69,22 @@ router.get('/:id', function (req, res, next) {
         }
     });
 });
+
 // POST edit page - update the selected user
-router.post('/:id', function (req, res, next) {
+router.post('/:id', (req: express.Request, res: express.Response, next: any) => {
+
     // grab the id from the url parameter
     var id = req.params.id;
+
     // create and populate an user object
     var user = new User({
         _id: id,
         title: req.body.title,
         content: req.body.content
     });
+
     // run the update using mongoose and our model
-    User.update({ _id: id }, user, function (error) {
+    User.update({ _id: id }, user, (error) => {
         if (error) {
             console.log(error);
             res.end(error);
@@ -80,12 +94,15 @@ router.post('/:id', function (req, res, next) {
         }
     });
 });
+
 // GET delete user
-router.get('/delete/:id', function (req, res, next) {
+router.get('/delete/:id', (req: express.Request, res: express.Response, next: any) => {
+
     // get the id from the url
     var id = req.params.id;
+
     // use the model and delete this record
-    User.remove({ _id: id }, function (error) {
+    User.remove({ _id: id }, (error) => {
         if (error) {
             console.log(error);
             res.end(error);
@@ -95,7 +112,6 @@ router.get('/delete/:id', function (req, res, next) {
         }
     });
 });
+
 // make this public
 module.exports = router;
-
-//# sourceMappingURL=users.js.map
